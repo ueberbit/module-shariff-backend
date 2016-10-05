@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Main functions of the "Shariff backend" module.
+ */
+
+use Drupal\Core\Asset\AttachedAssetsInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_cron().
+ */
+function shariff_backend_cron() {
+  $database = \Drupal::database();
+
+  if ($database->schema()->tableExists('shariff_backend')) {
+    // Delete expired Shariff backend share count records.
+    // This does not use the configured cache TTL, as it is already respected
+    // during cache gets, but deletes all records older than 7 days to clean up
+    // orphaned rows.
+    $database
+      ->delete('shariff_backend')
+      ->condition('timestamp', REQUEST_TIME - 604800, '<')
+      ->execute();
+  }
+}
+
+/**
+ * Implements hook_js_settings_build().
+ */
+function shariff_backend_js_settings_build(array &$settings, AttachedAssetsInterface $assets) {
+  // Add Shariff backend URL for retrieving share counts.
+  $settings['shariff_backend']['url'] = Url::fromRoute('shariff_backend.counts')->toString();
+}

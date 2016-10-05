@@ -1,0 +1,4 @@
+shariff_backend.settings:
+  route_name: shariff_backend.settings
+  parent: system.admin_config_services
+  title: Shariff backend

@@ -1,0 +1,14 @@
+shariff_backend.counts:
+  path: '/shariff/backend'
+  defaults:
+    _controller: '\Drupal\shariff_backend\Controller\ShariffBackendCountsController::counts'
+  requirements:
+    _permission: 'access content'
+
+shariff_backend.settings:
+  path: '/admin/config/services/shariff/backend'
+  defaults:
+    _form: 'Drupal\shariff_backend\Form\ShariffBackendSettingsForm'
+    _title: 'Shariff backend'
+  requirements:
+    _permission: 'administer site configuration'

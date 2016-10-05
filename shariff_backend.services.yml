@@ -1,0 +1,9 @@
+services:
+  shariff_backend.backend:
+    class: Drupal\shariff_backend\ShariffBackend
+    arguments: ['@shariff_backend.backend.options']
+  shariff_backend.backend.options:
+    class: Drupal\shariff_backend\ShariffBackendOptions
+    arguments: ['@config.factory']
+    tags:
+      - { name: shariff_backend_options , priority: 0 }

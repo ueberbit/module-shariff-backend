@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the shariff_backend module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function shariff_backend_schema() {
+  $schema = [];
+
+  $schema['shariff_backend'] = array(
+    'description' => 'Stores Shariff backend share counts.',
+    'fields' => array(
+      'url_hash' => array(
+        'description' => "A hash of the URL to store Shariff backend share counts for.",
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+      ),
+      'timestamp' => array(
+        'description' => 'A Unix timestamp indicating when this Shariff backend share count was saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'data' => array(
+        'description' => 'A JSON array containing the Shariff backend counts.',
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+      ),
+    ),
+    'primary key' => array('url_hash'),
+    'indexes' => array(
+      'timestamp' => array('timestamp'),
+    ),
+  );
+
+  return $schema;
+}
+
+/**
+ * Create 'shariff_backend' database table.
+ */
+function shariff_backend_update_8001() {
+  $database = \Drupal::database();
+  
+  if (!$database->schema()->tableExists('shariff_backend')) {
+    drupal_install_schema('shariff_backend');
+  }
+}
+
+/**
+ * Remove obsolete 'cache_shariff_backend' database table.
+ */
+function shariff_backend_update_8002() {
+  $database = \Drupal::database();
+
+  if ($database->schema()->tableExists('cache_shariff_backend')) {
+    $database->schema()->dropTable('cache_shariff_backend');
+  }
+}
