@@ -51,6 +51,22 @@ class ShariffBackendSettingsForm extends ConfigFormBase {
       '#description' => $this->t('An optional client secret needed to access the Facebook application(required if Facebook application ID is set).'),
     );
 
+    // Base Domain
+    $form['base_domain'] = array(
+      '#type' => 'textfield',
+      '#title' => $this->t('Base domain to check against.'),
+      '#default_value' => $config->get('base_domain'),
+      '#description' =>  $this->t('Can be the live domain for testing on a development machine.'),
+    );
+
+    // Simulate Counts
+    $form['simulate_counts'] = array(
+      '#type' => 'checkbox',
+      '#title' => $this->t('Simuate counts'),
+      '#default_value' => $config->get('simulate_counts'),
+      '#description' =>  $this->t('Simulate fictional counts.'),
+    );
+
     // Share count cache TTL
     $options = [3600, 10800, 21600, 43200, 86400, 604800];
     $form['cache_ttl'] = [
@@ -73,6 +89,8 @@ class ShariffBackendSettingsForm extends ConfigFormBase {
       ->set('cache_ttl', $form_state->getValue('cache_ttl'))
       ->set('facebook_app_id', $form_state->getValue('facebook_app_id'))
       ->set('facebook_app_secret', $form_state->getValue('facebook_app_secret'))
+      ->set('base_domain', $form_state->getValue('base_domain'))
+      ->set('simulate_counts', $form_state->getValue('simulate_counts'))
       ->save();
 
     parent::submitForm($form, $form_state);
