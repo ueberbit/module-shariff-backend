@@ -77,6 +77,28 @@ class ShariffBackendSettingsForm extends ConfigFormBase {
       '#options' => [0 => '<' . t('no caching') . '>'] + array_map([\Drupal::service('date.formatter'), 'formatInterval'], array_combine($options, $options)),
     ];
 
+    // Available services.
+    $shariff_services = [
+      'GooglePlus' => 'GooglePlus',
+      'Facebook' => 'Facebook',
+      'LinkedIn' => 'LinkedIn',
+      'Reddit' => 'Reddit',
+      'StumbleUpon' => 'StumbleUpon',
+      'Flattr' => 'Flattr',
+      'Pinterest' => 'Pinterest',
+      'Xing' => 'Xing',
+      'AddThis' => 'AddThis'
+    ];
+    $selected_services = $config->get('services');
+    $form['services'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Services'),
+      '#options' => $shariff_services,
+      '#default_value' => !empty($selected_services) ? $selected_services : [],
+      '#description' => t('Available services.'),
+      '#required' => TRUE
+    );
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -85,12 +107,22 @@ class ShariffBackendSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Save new values.
+    // Clean up services.
+    $services = [];
+    $selected_services = $form_state->getValue('services');
+    foreach ($selected_services as $selected_service) {
+      if (!empty($selected_service)) {
+        $services[] = $selected_service;
+      }
+    }
+
     $this->config('shariff_backend.settings')
       ->set('cache_ttl', $form_state->getValue('cache_ttl'))
       ->set('facebook_app_id', $form_state->getValue('facebook_app_id'))
       ->set('facebook_app_secret', $form_state->getValue('facebook_app_secret'))
       ->set('base_domain', $form_state->getValue('base_domain'))
       ->set('simulate_counts', $form_state->getValue('simulate_counts'))
+      ->set('services', $services)
       ->save();
 
     parent::submitForm($form, $form_state);
