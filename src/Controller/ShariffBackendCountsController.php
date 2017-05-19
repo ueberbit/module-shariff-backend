@@ -97,6 +97,8 @@ class ShariffBackendCountsController extends ControllerBase {
     // Build response.
     $response = new CacheableJsonResponse();
     $response->setData($result);
+    $response->addCacheableDependency($this->config('shariff_backend.settings'));
+    $response->getCacheableMetadata()->addCacheContexts(['url']);
 
     // Set cache max-age to 1 day.
     $max_age = $this->config('shariff_backend.settings')->get('cache_ttl');
