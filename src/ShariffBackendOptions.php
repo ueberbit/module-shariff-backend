@@ -92,8 +92,12 @@ class ShariffBackendOptions implements ShariffBackendOptionsInterface {
    */
   public function getDomains() {
     $domains = [
-      Url::fromRoute('<front>')->setAbsolute(TRUE)->toString(),
+      \Drupal::service('router.request_context')->getCompleteBaseUrl(),
     ];
+
+    if ($base_domain = $this->configFactory->get('shariff_backend.settings')->get('base_domain')) {
+      $domains[] = $base_domain;
+    }
 
     // Allow adding domains via settings.php.
     $backend_settings = Settings::get('shariff_backend');
