@@ -111,17 +111,9 @@ class ShariffBackendOptions implements ShariffBackendOptionsInterface {
    * {@inheritdoc}
    */
   public function getServices() {
-    return [
-      static::SERVICE_ADDTHIS,
-      static::SERVICE_FACEBOOK,
-      static::SERVICE_FLATTR,
-      static::SERVICE_GOOGLE_PLUS,
-      static::SERVICE_LINKEDIN,
-      static::SERVICE_PINTEREST,
-      static::SERVICE_REDDIT,
-      static::SERVICE_STUMBLEUPON,
-      static::SERVICE_XING,
-    ];
+    $config = $this->configFactory->get('shariff_backend.settings');
+    $services = $config->get('services');
+    return $services;
   }
 
   /**

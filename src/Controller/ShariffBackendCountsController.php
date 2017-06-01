@@ -9,10 +9,10 @@ namespace Drupal\shariff_backend\Controller;
 
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Component\Utility\Xss;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\shariff_backend\ShariffBackendInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -95,7 +95,18 @@ class ShariffBackendCountsController extends ControllerBase {
     }
 
     // Build response.
-    $response = new JsonResponse($result);
+    $response = new JsonResponse();
+    $response->setData($result);
+
+    // Set cache max-age to 1 day.
+    $max_age = 86400;
+    $response->setPublic();
+    $response->setMaxAge($max_age);
+
+    $expires = new \DateTime();
+    $expires->setTimestamp(REQUEST_TIME + $max_age);
+    $response->setExpires($expires);
+
     return $response;
   }
 
