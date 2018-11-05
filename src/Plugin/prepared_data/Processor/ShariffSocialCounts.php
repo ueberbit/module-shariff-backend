@@ -75,10 +75,12 @@ class ShariffSocialCounts extends ProcessorBase implements ContainerFactoryPlugi
       return;
     }
 
-    foreach ($counts as $platform => $result) {
-      if (empty($result['raw'])) {
-        // Skip zero-values.
-        unset($counts[$platform]);
+    if (!empty($counts)) {
+      foreach ($counts as $platform => $result) {
+        if (empty($result['raw'])) {
+          // Skip zero-values.
+          unset($counts[$platform]);
+        }
       }
     }
 
