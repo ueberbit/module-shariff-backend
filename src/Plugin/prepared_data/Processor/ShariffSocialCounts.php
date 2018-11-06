@@ -60,10 +60,12 @@ class ShariffSocialCounts extends ProcessorBase implements ContainerFactoryPlugi
   public function process(PreparedDataInterface $data) {
     $info = $data->info();
     if (empty($info['entity']) || !($info['entity'] instanceof EntityInterface)) {
+      // Quick cleanup.
       $data_array = &$data->data();
       unset($data_array['shariff']);
       return;
     }
+
     /** @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = $info['entity'];
     try {
@@ -71,20 +73,29 @@ class ShariffSocialCounts extends ProcessorBase implements ContainerFactoryPlugi
       $counts = $this->shariffBackend->getCounts($url, TRUE);
     }
     catch (\Exception $e) {
-      $data->data()['shariff'] = new \stdClass();
+      $data_array = &$data->data();
+      if (!isset($data_array['shariff'])) {
+        $data->data()['shariff'] = new \stdClass();
+      }
       return;
     }
 
-    if (!empty($counts)) {
+    if (isset($counts) && is_array($counts)) {
       foreach ($counts as $platform => $result) {
         if (empty($result['raw'])) {
           // Skip zero-values.
           unset($counts[$platform]);
         }
       }
-    }
 
-    $data->data()['shariff'] = !empty($counts) ? $counts : new \stdClass();
+      $data->data()['shariff'] = !empty($counts) ? $counts : new \stdClass();
+    }
+    else {
+      $data_array = &$data->data();
+      if (!isset($data_array['shariff'])) {
+        $data->data()['shariff'] = new \stdClass();
+      }
+    }
   }
 
   /**

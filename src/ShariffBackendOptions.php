@@ -51,7 +51,8 @@ class ShariffBackendOptions implements ShariffBackendOptionsInterface {
         'ttl' => $this->getCacheMaxAge(),
       ],
       'client' => [
-        'timeout' => 0.8,
+        'timeout' => 1.5,
+        'connect_timeout' => 1.5,
       ],
       'domains' => $this->getDomains(),
       'services' => $this->getServices()
