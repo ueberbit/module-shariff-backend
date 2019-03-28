@@ -50,6 +50,10 @@ class ShariffBackendOptions implements ShariffBackendOptionsInterface {
       'cache' => [
         'ttl' => $this->getCacheMaxAge(),
       ],
+      'client' => [
+        'timeout' => 1.5,
+        'connect_timeout' => 1.5,
+      ],
       'domains' => $this->getDomains(),
       'services' => $this->getServices()
     ];
@@ -92,8 +96,12 @@ class ShariffBackendOptions implements ShariffBackendOptionsInterface {
    */
   public function getDomains() {
     $domains = [
-      Url::fromRoute('<front>')->setAbsolute(TRUE)->toString(),
+      \Drupal::service('router.request_context')->getCompleteBaseUrl(),
     ];
+
+    if ($base_domain = $this->configFactory->get('shariff_backend.settings')->get('base_domain')) {
+      $domains[] = $base_domain;
+    }
 
     // Allow adding domains via settings.php.
     $backend_settings = Settings::get('shariff_backend');
@@ -111,17 +119,9 @@ class ShariffBackendOptions implements ShariffBackendOptionsInterface {
    * {@inheritdoc}
    */
   public function getServices() {
-    return [
-      static::SERVICE_ADDTHIS,
-      static::SERVICE_FACEBOOK,
-      static::SERVICE_FLATTR,
-      static::SERVICE_GOOGLE_PLUS,
-      static::SERVICE_LINKEDIN,
-      static::SERVICE_PINTEREST,
-      static::SERVICE_REDDIT,
-      static::SERVICE_STUMBLEUPON,
-      static::SERVICE_XING,
-    ];
+    $config = $this->configFactory->get('shariff_backend.settings');
+    $services = $config->get('services');
+    return $services;
   }
 
   /**

@@ -11,3 +11,9 @@ shariff_backend.settings:
     facebook_app_secret:
       type: string
       label: 'Facebook application client secret'
+    base_domain:
+      type: string
+      label: 'Base domain of production instance'
+    simulate_counts:
+      type: boolean
+      label: 'Indicate if the counts should be simulated.'

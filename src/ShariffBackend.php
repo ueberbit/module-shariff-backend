@@ -54,13 +54,13 @@ class ShariffBackend implements ShariffBackendInterface {
       return $cache[$cid];
     }
 
-    $backend_settins = \Drupal::config('shariff_backend.settings')->getRawData();
+    $backend_settings = \Drupal::config('shariff_backend.settings')->getRawData();
     // Simulate share counts if configured in settings file.
     if (empty($backend_settings['simulate_counts'])) {
       // Alter the URL if needed.
-      if (isset($backend_settings['base_domain'])) {
+      if (!empty($backend_settings['base_domain'])) {
         // Replace domain in URL with configured domain.
-        $domain_current = Url::fromRoute('<front>')->setAbsolute(TRUE)->toString();
+        $domain_current = \Drupal::service('router.request_context')->getCompleteBaseUrl();
         $url = str_replace($domain_current, $backend_settings['base_domain'], $url);
       }
 
