@@ -9,7 +9,7 @@ namespace Drupal\shariff_backend\Controller;
 
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Component\Utility\Xss;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\shariff_backend\ShariffBackendInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -95,7 +95,20 @@ class ShariffBackendCountsController extends ControllerBase {
     }
 
     // Build response.
-    $response = new JsonResponse($result);
+    $response = new CacheableJsonResponse();
+    $response->setData($result);
+    $response->addCacheableDependency($this->config('shariff_backend.settings'));
+    $response->getCacheableMetadata()->addCacheContexts(['url']);
+
+    // Set cache max-age to 1 day.
+    $max_age = $this->config('shariff_backend.settings')->get('cache_ttl');
+    $response->setPublic();
+    $response->setMaxAge($max_age);
+
+    $expires = new \DateTime();
+    $expires->setTimestamp(REQUEST_TIME + $max_age);
+    $response->setExpires($expires);
+
     return $response;
   }
 
